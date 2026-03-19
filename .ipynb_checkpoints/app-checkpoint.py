@@ -58,3 +58,32 @@ if st.button("Predict"):
         # Debug info (optional but useful)
         with st.expander("See processed text"):
             st.write(cleaned)
+
+import requests
+
+API_KEY = "6680505537844216b62c937316112ede"
+
+def fetch_news():
+    url = f"https://newsapi.org/v2/top-headlines?country=us&apiKey={API_KEY}"
+    response = requests.get(url)
+    data = response.json()
+    return data["articles"]
+
+if st.button("Get Live News"):
+    articles = fetch_news()
+
+    for article in articles[:5]:
+        title = article["title"]
+
+        cleaned = clean_text(title)
+        vec = vectorizer.transform([cleaned])
+        prediction = model.predict(vec)[0]
+
+        if prediction == 1:
+            st.success(f"📰 {title} → REAL")
+        else:
+            st.error(f"📰 {title} → FAKE")    
+            
+
+
+            
